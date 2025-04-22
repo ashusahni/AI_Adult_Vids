@@ -59,8 +59,8 @@ export const SignupPage: React.FC = () => {
       {/* Left Image Section */}
       <div className="hidden lg:flex lg:w-1/2 relative">
         <img 
-          src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97"
-          alt="AI Technology"
+          src="/img/sign/IMG-20250422-WA0001.jpg"
+          alt="Sign Up Background"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />

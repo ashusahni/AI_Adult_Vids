@@ -9,10 +9,17 @@ export const LoginPage = () => {
       {/* Left Image Section */}
       <div className="hidden lg:flex lg:w-1/2 relative">
         <img 
-          src="https://images.unsplash.com/photo-1451187580459-43490279c0fa"
-          alt="AI Technology"
+          src="/img/sign/IMG-20250422-WA0014.jpg"
+          alt="Login Background"
           className="absolute inset-0 w-full h-full object-cover"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+          <h2 className="text-2xl font-bold mb-4">Welcome Back!</h2>
+          <p className="text-gray-300">
+            Continue your journey with our AI-powered content creation tools.
+          </p>
+        </div>
       </div>
 
       {/* Right Form Section */}
