@@ -5,37 +5,46 @@ export const videos: Video[] = [
     id: 'v1',
     type: 'video',
     title: 'Advanced Portrait Retouching Tutorial',
-    thumbnailUrl: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg',
+    thumbnailUrl: 'https://i.ytimg.com/vi/rTAZlHGOVo8/hqdefault.jpg',
+    videoUrl: 'https://www.youtube.com/watch?v=rTAZlHGOVo8',
+    youtubeId: 'rTAZlHGOVo8',
     duration: '15:24',
     views: 125000,
     likes: 12400,
     dislikes: 120,
     premium: false,
-    createdAt: '2024-03-15T10:00:00Z'
+    description: 'Learn advanced portrait retouching techniques using AI-powered tools.',
+    category: 'tutorial'
   },
   {
     id: 'v2',
     type: 'video',
     title: 'AI Style Transfer Masterclass',
-    thumbnailUrl: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg',
+    thumbnailUrl: 'https://i.ytimg.com/vi/9BFuUfL_Ucw/hqdefault.jpg',
+    videoUrl: 'https://www.youtube.com/watch?v=9BFuUfL_Ucw',
+    youtubeId: '9BFuUfL_Ucw',
     duration: '23:15',
     views: 89000,
     likes: 9500,
     dislikes: 85,
     premium: true,
-    createdAt: '2024-03-14T15:30:00Z'
+    description: 'Master the art of AI style transfer with this comprehensive guide.',
+    category: 'tutorial'
   },
   {
     id: 'v3',
     type: 'video',
     title: 'Professional Lighting Techniques',
-    thumbnailUrl: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg',
+    thumbnailUrl: 'https://i.ytimg.com/vi/j_Sov3xmgwg/hqdefault.jpg',
+    videoUrl: 'https://www.youtube.com/watch?v=j_Sov3xmgwg',
+    youtubeId: 'j_Sov3xmgwg',
     duration: '18:45',
     views: 256000,
     likes: 18900,
     dislikes: 230,
     premium: true,
-    createdAt: '2024-03-13T09:15:00Z'
+    description: 'Learn professional lighting techniques for portrait photography.',
+    category: 'tutorial'
   }
 ];
 

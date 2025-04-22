@@ -1,102 +1,160 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { sampleVideos } from '../data/sampleContent';
-import { VideoCard } from '../components/VideoCard';
-import { Play, Plus, ThumbsUp, Volume2, VolumeX, Maximize2 } from 'lucide-react';
+import { videos } from '../data/content';
+import { YouTubePlayer } from '../components/YouTubePlayer';
+import { useAuth } from '../context/AuthContext';
+import { ThumbsUp, ThumbsDown, Share2, MessageCircle, Flag, Clock, Eye } from 'lucide-react';
 
 export const VideoPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [isMuted, setIsMuted] = useState(true);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const { authState } = useAuth();
+  const { isAuthenticated, isSubscribed } = authState;
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
-  const video = sampleVideos.find(v => v.id === id);
-  const relatedVideos = sampleVideos.filter(v => v.id !== id);
+  const video = videos.find(v => v.id === id);
 
   if (!video) {
-    return <div className="text-white text-center py-20">Video not found</div>;
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <p className="text-white text-xl">Video not found</p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    navigate('/signup');
+    return null;
+  }
+
+  if (video.premium && !isSubscribed) {
+    navigate('/subscribe');
+    return null;
   }
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Hero Section */}
-      <div className="relative h-[75vh] w-full">
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10" />
-        <img
-          src={video.thumbnailUrl}
-          alt={video.title}
-          className="w-full h-full object-cover"
-        />
-        
-        {/* Video Controls */}
-        <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold text-white mb-4">{video.title}</h1>
-            <p className="text-gray-300 mb-6 max-w-2xl">{video.description}</p>
-            
-            <div className="flex items-center space-x-4">
-              <button className="flex items-center px-6 py-2 bg-white text-black rounded hover:bg-white/90">
-                <Play className="w-5 h-5 mr-2" />
-                Play
-              </button>
-              <button className="flex items-center px-4 py-2 bg-gray-600/50 text-white rounded hover:bg-gray-600/70">
-                <Plus className="w-5 h-5 mr-2" />
-                My List
-              </button>
-              <button className="flex items-center px-4 py-2 bg-gray-600/50 text-white rounded hover:bg-gray-600/70">
-                <ThumbsUp className="w-5 h-5 mr-2" />
-                Like
-              </button>
+    <div className="min-h-screen bg-gray-900 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-2">
+            {/* Video Player */}
+            <div className="rounded-xl overflow-hidden">
+              <YouTubePlayer videoId={video.youtubeId} title={video.title} />
+            </div>
+
+            {/* Video Info */}
+            <div className="mt-4">
+              <h1 className="text-2xl font-bold text-white mb-2">{video.title}</h1>
+              
+              <div className="flex flex-wrap items-center justify-between gap-4 py-3 border-b border-gray-700">
+                <div className="flex items-center space-x-4 text-gray-400">
+                  <div className="flex items-center">
+                    <Eye className="w-5 h-5 mr-2" />
+                    <span>{video.views.toLocaleString()} views</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Clock className="w-5 h-5 mr-2" />
+                    <span>{video.duration}</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <button className="flex items-center space-x-2 text-gray-400 hover:text-purple-500 transition-colors">
+                    <ThumbsUp className="w-5 h-5" />
+                    <span>{video.likes.toLocaleString()}</span>
+                  </button>
+                  <button className="flex items-center space-x-2 text-gray-400 hover:text-purple-500 transition-colors">
+                    <ThumbsDown className="w-5 h-5" />
+                    <span>{video.dislikes.toLocaleString()}</span>
+                  </button>
+                  <button className="flex items-center space-x-2 text-gray-400 hover:text-purple-500 transition-colors">
+                    <Share2 className="w-5 h-5" />
+                    <span>Share</span>
+                  </button>
+                  <button className="flex items-center space-x-2 text-gray-400 hover:text-purple-500 transition-colors">
+                    <Flag className="w-5 h-5" />
+                    <span>Report</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="mt-4 bg-gray-800/50 rounded-xl p-4">
+                <div className={`text-gray-300 ${!isDescriptionExpanded && 'line-clamp-3'}`}>
+                  {video.description}
+                </div>
+                <button
+                  className="text-purple-500 hover:text-purple-400 mt-2 font-medium"
+                  onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                >
+                  {isDescriptionExpanded ? 'Show less' : 'Show more'}
+                </button>
+              </div>
+
+              {/* Comments Section */}
+              <div className="mt-6">
+                <div className="flex items-center space-x-2 text-white mb-4">
+                  <MessageCircle className="w-5 h-5" />
+                  <h2 className="text-lg font-medium">Comments</h2>
+                </div>
+                <div className="flex space-x-4">
+                  <div className="w-10 h-10 rounded-full bg-gray-700"></div>
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      placeholder="Add a comment..."
+                      className="w-full bg-transparent border-b border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 pb-2"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Top Controls */}
-        <div className="absolute top-4 right-4 flex items-center space-x-4 z-20">
-          <button 
-            onClick={() => setIsMuted(!isMuted)}
-            className="p-2 bg-black/50 rounded-full text-white hover:bg-black/70"
-          >
-            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-          </button>
-          <button 
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-2 bg-black/50 rounded-full text-white hover:bg-black/70"
-          >
-            <Maximize2 className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-
-      {/* Video Details */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2">
-            <div className="flex items-center space-x-4 mb-4">
-              <span className="text-green-500 font-semibold">98% Match</span>
-              <span className="text-gray-400">{video.duration}</span>
-              <span className="text-gray-400">HD</span>
+          {/* Recommended Videos */}
+          <div className="lg:col-span-1">
+            <h2 className="text-lg font-medium text-white mb-4">Recommended Videos</h2>
+            <div className="space-y-4">
+              {videos
+                .filter(v => v.id !== video.id)
+                .map(recommendedVideo => (
+                  <div
+                    key={recommendedVideo.id}
+                    className="flex space-x-4 cursor-pointer hover:bg-gray-800/50 p-2 rounded-xl transition-colors"
+                    onClick={() => navigate(`/video/${recommendedVideo.id}`)}
+                  >
+                    <div className="flex-shrink-0 w-40 relative">
+                      <img
+                        src={recommendedVideo.thumbnailUrl}
+                        alt={recommendedVideo.title}
+                        className="w-full aspect-video object-cover rounded-lg"
+                      />
+                      <div className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
+                        {recommendedVideo.duration}
+                      </div>
+                      {recommendedVideo.premium && (
+                        <div className="absolute top-1 right-1 bg-purple-500 text-white text-xs px-1.5 py-0.5 rounded">
+                          PREMIUM
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-white font-medium line-clamp-2 text-sm">
+                        {recommendedVideo.title}
+                      </h3>
+                      <div className="flex items-center text-gray-400 text-xs mt-1 space-x-2">
+                        <span>{recommendedVideo.views.toLocaleString()} views</span>
+                        <span>•</span>
+                        <div className="flex items-center">
+                          <ThumbsUp className="w-3 h-3 mr-1" />
+                          {recommendedVideo.likes.toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </div>
-            <p className="text-gray-300 mb-4">{video.description}</p>
-            <div className="flex items-center space-x-4 text-gray-400">
-              <span>Category: {video.category}</span>
-              <span>Views: {video.views.toLocaleString()}</span>
-              <span>Likes: {video.likes.toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Related Videos */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold text-white mb-6">More Like This</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {relatedVideos.map((relatedVideo) => (
-              <VideoCard
-                key={relatedVideo.id}
-                video={relatedVideo}
-                onClick={() => navigate(`/video/${relatedVideo.id}`)}
-              />
-            ))}
           </div>
         </div>
       </div>

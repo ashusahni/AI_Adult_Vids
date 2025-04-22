@@ -12,11 +12,14 @@ export interface BaseContent {
 }
 
 export interface Video extends BaseContent {
+  type: 'video';
   videoUrl: string;
+  youtubeId: string;
   duration: string;
 }
 
 export interface Image extends BaseContent {
+  type: 'image';
   imageUrl: string;
   resolution: string;
 }
