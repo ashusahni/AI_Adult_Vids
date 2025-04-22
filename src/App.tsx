@@ -5,6 +5,7 @@ import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { SubscribePage } from './pages/SubscribePage';
 import { VideoPage } from './pages/VideoPage';
+import { ImagePage } from './pages/ImagePage';
 import HowItWorksPage from './pages/HowItWorksPage';
 import PricingPage from './pages/PricingPage';
 import FeaturesPage from './pages/FeaturesPage';
@@ -24,6 +25,7 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/subscribe" element={<SubscribePage />} />
             <Route path="/video/:id" element={<VideoPage />} />
+            <Route path="/image/:id" element={<ImagePage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/features" element={<FeaturesPage />} />

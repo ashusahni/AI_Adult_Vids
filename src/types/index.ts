@@ -9,6 +9,7 @@ export interface BaseContent {
   views: number;
   thumbnailUrl: string;
   createdAt: string;
+  type: 'video' | 'image';
 }
 
 export interface Video extends BaseContent {
