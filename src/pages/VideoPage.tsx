@@ -22,7 +22,7 @@ export const VideoPage: React.FC = () => {
     );
   }
 
-  if (!isAuthenticated) {
+  if (video.premium && !isAuthenticated) {
     navigate('/signup');
     return null;
   }
