@@ -102,3 +102,5 @@ export const SubscribePage: React.FC = () => {
     </div>
   );
 };
+
+export default SubscribePage;

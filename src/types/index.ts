@@ -3,7 +3,7 @@ export interface BaseContent {
   title: string;
   description: string;
   category: string;
-  premium: boolean;
+  isPremium: boolean;
   likes: number;
   dislikes: number;
   views: number;

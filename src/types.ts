@@ -22,6 +22,8 @@ export interface Video {
   category: string;
   premium: boolean;
   uploadDate: string;
+  type: 'video';
+  youtubeId: string;
 }
 
 export interface Image {
@@ -36,6 +38,7 @@ export interface Image {
   category: string;
   premium: boolean;
   uploadDate: string;
+  type: 'image';
 }
 
 export type Content = Video | Image; 
