@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -39,7 +40,9 @@ export const Button: React.FC<ButtonProps> = ({
   const widthClass = fullWidth ? 'w-full' : '';
   
   return (
-    <button
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${className} ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
       disabled={isLoading || props.disabled}
       {...props}
@@ -53,6 +56,6 @@ export const Button: React.FC<ButtonProps> = ({
           Loading...
         </span>
       ) : children}
-    </button>
+    </motion.button>
   );
 };

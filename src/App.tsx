@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { AuthProvider } from './context/AuthContext';
@@ -16,10 +16,49 @@ const FeaturesPage = lazy(() => import('./pages/FeaturesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 
 function App() {
+  const [ageVerified, setAgeVerified] = useState(false);
+
+  useEffect(() => {
+    const verified = localStorage.getItem('ageVerified');
+    if (verified === 'true') {
+      setAgeVerified(true);
+    }
+  }, []);
+
+  const handleAgeVerification = () => {
+    localStorage.setItem('ageVerified', 'true');
+    setAgeVerified(true);
+  };
+
   return (
     <AuthProvider>
       <Router>
         <Layout>
+          {!ageVerified && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+              <div className="bg-gray-800 p-8 rounded-lg shadow-lg text-center">
+                <h2 className="text-2xl font-bold mb-4 text-white">Age Verification</h2>
+                <p className="mb-6 text-gray-300">You must be 18 years or older to enter this site.</p>
+                <div className="flex justify-center gap-4">
+                  <button
+                    onClick={handleAgeVerification}
+                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all duration-200"
+                  >
+                    I am 18 or older
+                  </button>
+                  <button
+                    onClick={() => {
+                      alert('You are not eligible to access this website.');
+                      window.location.href = 'https://www.google.com';
+                    }}
+                    className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all duration-200"
+                  >
+                    I am not 18
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
               <Route path="/" element={<HomePage />} />

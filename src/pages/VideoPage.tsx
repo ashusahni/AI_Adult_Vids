@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { videos } from '../data/content';
 import { YouTubePlayer } from '../components/YouTubePlayer';
@@ -11,6 +11,8 @@ export const VideoPage: React.FC = () => {
   const { authState } = useAuth();
   const { isAuthenticated, isSubscribed } = authState;
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
 
   const video = videos.find(v => v.id === id);
 
@@ -31,6 +33,56 @@ export const VideoPage: React.FC = () => {
     navigate('/subscribe');
     return null;
   }
+
+  useEffect(() => {
+    const liked = localStorage.getItem(`liked_${video.id}`);
+    const disliked = localStorage.getItem(`disliked_${video.id}`);
+    if (liked === 'true') {
+      setLikes(prevLikes => prevLikes + 1);
+    }
+    if (disliked === 'true') {
+      setDislikes(prevDislikes => prevDislikes + 1);
+    }
+  }, [video.id]);
+
+  const handleLike = () => {
+    const liked = localStorage.getItem(`liked_${video.id}`);
+    const disliked = localStorage.getItem(`disliked_${video.id}`);
+    if (!liked) {
+      setLikes(prevLikes => prevLikes + 1);
+      localStorage.setItem(`liked_${video.id}`, 'true');
+      // If previously disliked, remove the dislike
+      if (disliked) {
+        setDislikes(prevDislikes => prevDislikes - 1);
+        localStorage.removeItem(`disliked_${video.id}`);
+      }
+      // TODO: Add API call to update likes on the server
+    }
+  };
+
+  const handleDislike = () => {
+    const disliked = localStorage.getItem(`disliked_${video.id}`);
+    const liked = localStorage.getItem(`liked_${video.id}`);
+    if (!disliked) {
+      setDislikes(prevDislikes => prevDislikes + 1);
+      localStorage.setItem(`disliked_${video.id}`, 'true');
+      // If previously liked, remove the like
+      if (liked) {
+        setLikes(prevLikes => prevLikes - 1);
+        localStorage.removeItem(`liked_${video.id}`);
+      }
+      // TODO: Add API call to update dislikes on the server
+    }
+  };
+
+  const handleShare = () => {
+    const videoUrl = window.location.href;
+    navigator.clipboard.writeText(videoUrl).then(() => {
+      alert('Video URL copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 py-6">
@@ -60,15 +112,15 @@ export const VideoPage: React.FC = () => {
                 </div>
                 
                 <div className="flex items-center space-x-4">
-                  <button className="flex items-center space-x-2 text-gray-400 hover:text-purple-500 transition-colors">
+                  <button onClick={handleLike} className="flex items-center space-x-2 text-gray-400 hover:text-purple-500 transition-colors">
                     <ThumbsUp className="w-5 h-5" />
-                    <span>{video.likes.toLocaleString()}</span>
+                    <span>{likes.toLocaleString()}</span>
                   </button>
-                  <button className="flex items-center space-x-2 text-gray-400 hover:text-purple-500 transition-colors">
+                  <button onClick={handleDislike} className="flex items-center space-x-2 text-gray-400 hover:text-purple-500 transition-colors">
                     <ThumbsDown className="w-5 h-5" />
-                    <span>{video.dislikes.toLocaleString()}</span>
+                    <span>{dislikes.toLocaleString()}</span>
                   </button>
-                  <button className="flex items-center space-x-2 text-gray-400 hover:text-purple-500 transition-colors">
+                  <button onClick={handleShare} className="flex items-center space-x-2 text-gray-400 hover:text-purple-500 transition-colors">
                     <Share2 className="w-5 h-5" />
                     <span>Share</span>
                   </button>
@@ -124,7 +176,7 @@ export const VideoPage: React.FC = () => {
                     className="flex space-x-4 cursor-pointer hover:bg-gray-800/50 p-2 rounded-xl transition-colors"
                     onClick={() => navigate(`/video/${recommendedVideo.id}`)}
                   >
-                    <div className="flex-shrink-0 w-40 relative">
+                    <div className="flex-shrink-0 w-52 relative">
                       <img
                         src={recommendedVideo.thumbnailUrl}
                         alt={recommendedVideo.title}

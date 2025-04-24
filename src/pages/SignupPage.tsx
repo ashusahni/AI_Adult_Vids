@@ -57,7 +57,7 @@ export const SignupPage: React.FC = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Image Section */}
-      <div className="hidden lg:flex lg:w-1/2 relative">
+      <div className="flex w-full lg:w-1/2 relative">
         <img 
           src="/img/sign/IMG-20250422-WA0001.jpg"
           alt="Sign Up Background"

@@ -66,12 +66,6 @@ export const HomePage: React.FC = () => {
                 >
                   Get Started
                 </Link>
-                <Link 
-                  to="/how-it-works" 
-                  className="w-full sm:w-auto px-8 py-4 text-base font-medium rounded-lg text-purple-400 border-2 border-purple-500/50 hover:bg-purple-500 hover:text-white transition-all duration-200 transform hover:scale-105"
-                >
-                  Learn More
-                </Link>
               </div>
             </div>
           </div>

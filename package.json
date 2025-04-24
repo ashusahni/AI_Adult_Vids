@@ -10,11 +10,13 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "framer-motion": "^12.9.1",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
+    "react-lazy-load-image-component": "^1.6.3",
     "react-router-dom": "^6.21.3"
   },
   "devDependencies": {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -7,7 +8,12 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900"
+    >
       {/* Navigation */}
       <nav className="bg-black/95 backdrop-blur-sm border-b border-gray-800/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,7 +28,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <span className="ml-3 text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">PornLabAi</span>
               </Link>
               <div className="hidden md:flex items-center ml-12 space-x-8">
-                <Link to="/" className="text-purple-500 font-medium hover:text-purple-400 transition-colors duration-200">Home</Link>
+                {/* <Link to="/" className="text-purple-500 font-medium hover:text-purple-400 transition-colors duration-200">Home</Link> */}
                 <Link to="/features" className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium">Features</Link>
                 <Link to="/how-it-works" className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium">How It Works</Link>
                 <Link to="/pricing" className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium">Pricing</Link>
@@ -147,6 +153,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </footer>
-    </div>
+    </motion.div>
   );
 }; 
