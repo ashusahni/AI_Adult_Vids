@@ -43,6 +43,29 @@ export const ImagePage: React.FC = () => {
     }
   }, [id, currentImage]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsFullscreen(false);
+      }
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (isFullscreen && target.closest('.fullscreen-image') === null) {
+        setIsFullscreen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isFullscreen]);
+
   if (!currentImage) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -78,7 +101,7 @@ export const ImagePage: React.FC = () => {
       <div className="relative z-10">
         {/* Fullscreen Image View */}
         {isFullscreen && (
-          <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
+          <div className="fixed inset-0 z-50 bg-black flex items-center justify-center fullscreen-image">
             <button
               onClick={() => setIsFullscreen(false)}
               className="absolute top-4 right-4 text-white hover:text-purple-500 transition-colors"
