@@ -60,9 +60,12 @@ export const HomePage: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900 z-10"></div>
         <div 
           className="h-[60vh] bg-cover bg-center" 
-          style={{ backgroundImage: `url(${bgImage})` }}
+          style={{ 
+            backgroundImage: `url(${bgImage})`,
+            filter: 'brightness(1.3) contrast(1.05)'
+          }}
         ></div>
-        <div className="absolute inset-0 bg-black/60 z-0"></div>
+        <div className="absolute inset-0 bg-black/40 z-0"></div>
         <div className="absolute inset-0 flex items-center z-20">
           <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl">
