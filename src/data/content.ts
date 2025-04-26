@@ -14,7 +14,8 @@ export const videos: Video[] = [
     dislikes: 120,
     premium: false,
     description: 'Learn advanced portrait retouching techniques using AI-powered tools.',
-    category: 'tutorial'
+    category: 'tutorial',
+    uploadDate: '2024-03-15T10:30:00Z'
   },
   {
     id: 'v2',
@@ -29,7 +30,8 @@ export const videos: Video[] = [
     dislikes: 85,
     premium: true,
     description: 'Master the art of AI style transfer with this comprehensive guide.',
-    category: 'tutorial'
+    category: 'tutorial',
+    uploadDate: '2024-03-14T14:45:00Z'
   },
   {
     id: 'v3',
@@ -44,7 +46,88 @@ export const videos: Video[] = [
     dislikes: 230,
     premium: true,
     description: 'Learn professional lighting techniques for portrait photography.',
-    category: 'tutorial'
+    category: 'tutorial',
+    uploadDate: '2024-03-13T09:20:00Z'
+  },
+  {
+    id: 'v4',
+    type: 'video',
+    title: 'Ultimate Guide to AI Face Enhancement',
+    thumbnailUrl: 'https://i.ytimg.com/vi/dqZAA8ZIAVE/hqdefault.jpg',
+    videoUrl: 'https://www.youtube.com/watch?v=dqZAA8ZIAVE',
+    youtubeId: 'dqZAA8ZIAVE',
+    duration: '12:38',
+    views: 178000,
+    likes: 15600,
+    dislikes: 145,
+    premium: false,
+    description: 'The ultimate guide to enhancing facial features using AI technology.',
+    category: 'tutorial',
+    uploadDate: '2024-03-12T16:15:00Z'
+  },
+  {
+    id: 'v5',
+    type: 'video',
+    title: 'Creating Perfect AI Portraits - Pro Tips',
+    thumbnailUrl: 'https://i.ytimg.com/vi/sYeSU2spHQA/hqdefault.jpg',
+    videoUrl: 'https://www.youtube.com/watch?v=sYeSU2spHQA',
+    youtubeId: 'sYeSU2spHQA',
+    duration: '21:05',
+    views: 206000,
+    likes: 21300,
+    dislikes: 190,
+    premium: true,
+    description: 'Professional tips for creating flawless AI-enhanced portraits.',
+    category: 'tutorial',
+    uploadDate: '2024-03-11T11:30:00Z'
+  },
+  {
+    id: 'v6',
+    type: 'video',
+    title: 'Advanced Skin Retouching Workflow',
+    thumbnailUrl: 'https://i.ytimg.com/vi/jlw7q4koAss/hqdefault.jpg',
+    videoUrl: 'https://www.youtube.com/watch?v=jlw7q4koAss',
+    youtubeId: 'jlw7q4koAss',
+    duration: '14:52',
+    views: 145000,
+    likes: 13800,
+    dislikes: 125,
+    premium: false,
+    description: 'Advanced workflow for natural-looking skin retouching using AI.',
+    category: 'tutorial',
+    uploadDate: '2024-03-10T13:45:00Z'
+  },
+  {
+    id: 'v7',
+    type: 'video',
+    title: 'Facial Feature Enhancement Masterclass',
+    thumbnailUrl: 'https://i.ytimg.com/vi/XPV8P7dpTbw/hqdefault.jpg',
+    videoUrl: 'https://www.youtube.com/watch?v=XPV8P7dpTbw',
+    youtubeId: 'XPV8P7dpTbw',
+    duration: '19:32',
+    views: 167000,
+    likes: 16200,
+    dislikes: 150,
+    premium: true,
+    description: 'Comprehensive masterclass on enhancing facial features using AI tools.',
+    category: 'tutorial',
+    uploadDate: '2024-03-09T15:20:00Z'
+  },
+  {
+    id: 'v8',
+    type: 'video',
+    title: 'Beauty Retouching Essentials',
+    thumbnailUrl: 'https://i.ytimg.com/vi/TZRVJoHbGjE/hqdefault.jpg',
+    videoUrl: 'https://www.youtube.com/watch?v=TZRVJoHbGjE',
+    youtubeId: 'TZRVJoHbGjE',
+    duration: '16:48',
+    views: 128000,
+    likes: 11900,
+    dislikes: 110,
+    premium: false,
+    description: 'Essential techniques for beauty retouching with AI-powered tools.',
+    category: 'tutorial',
+    uploadDate: '2024-03-08T10:10:00Z'
   }
 ];
 
@@ -62,7 +145,7 @@ export const images: Image[] = [
     likes: 15600,
     dislikes: 180,
     premium: false,
-    createdAt: '2024-03-12T14:20:00Z'
+    uploadDate: '2024-03-12T14:20:00Z'
   },
   {
     id: 'i2',
@@ -77,7 +160,7 @@ export const images: Image[] = [
     likes: 21300,
     dislikes: 145,
     premium: true,
-    createdAt: '2024-03-11T11:45:00Z'
+    uploadDate: '2024-03-11T11:45:00Z'
   },
   {
     id: 'i3',
@@ -92,7 +175,7 @@ export const images: Image[] = [
     likes: 19200,
     dislikes: 160,
     premium: false,
-    createdAt: '2024-03-10T16:30:00Z'
+    uploadDate: '2024-03-10T16:30:00Z'
   },
   {
     id: 'i4',
@@ -107,7 +190,7 @@ export const images: Image[] = [
     likes: 14200,
     dislikes: 120,
     premium: true,
-    createdAt: '2024-03-09T13:20:00Z'
+    uploadDate: '2024-03-09T13:20:00Z'
   },
   {
     id: 'i5',
@@ -122,7 +205,7 @@ export const images: Image[] = [
     likes: 18500,
     dislikes: 140,
     premium: false,
-    createdAt: '2024-03-08T15:30:00Z'
+    uploadDate: '2024-03-08T15:30:00Z'
   },
   {
     id: 'i6',
@@ -137,7 +220,7 @@ export const images: Image[] = [
     likes: 16800,
     dislikes: 130,
     premium: true,
-    createdAt: '2024-03-07T10:15:00Z'
+    uploadDate: '2024-03-07T10:15:00Z'
   },
   {
     id: 'i7',
@@ -152,7 +235,7 @@ export const images: Image[] = [
     likes: 20100,
     dislikes: 150,
     premium: false,
-    createdAt: '2024-03-06T09:45:00Z'
+    uploadDate: '2024-03-06T09:45:00Z'
   },
   {
     id: 'i8',
@@ -167,6 +250,6 @@ export const images: Image[] = [
     likes: 19300,
     dislikes: 140,
     premium: true,
-    createdAt: '2024-03-05T14:20:00Z'
+    uploadDate: '2024-03-05T14:20:00Z'
   }
 ]; 

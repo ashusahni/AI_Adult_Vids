@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 export const LoginPage = () => {
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Image Section */}
       <div className="hidden lg:flex lg:w-1/2 relative">
         <img 

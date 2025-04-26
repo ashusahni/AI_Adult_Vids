@@ -33,6 +33,7 @@ export interface Image {
   thumbnailUrl: string;
   imageUrl: string;
   resolution: string;
+  views: number;
   likes: number;
   dislikes: number;
   category: string;
