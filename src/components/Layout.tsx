@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Menu, X } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -36,7 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-4">
               <Link 
                 to="/signup" 
                 className="text-purple-500 border-2 border-purple-500/50 px-5 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition-all duration-200 font-medium transform hover:scale-105"
@@ -50,8 +57,74 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 Login
               </Link>
             </div>
+
+            {/* Mobile menu button */}
+            <div className="flex items-center md:hidden">
+              <div className="flex items-center space-x-2">
+                <Link 
+                  to="/login" 
+                  className="bg-purple-500 text-white px-3 py-1.5 text-sm rounded-lg hover:bg-purple-600 transition-all duration-200 font-medium shadow-lg shadow-purple-500/25"
+                >
+                  Login
+                </Link>
+                <button
+                  type="button"
+                  onClick={toggleMobileMenu}
+                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none"
+                >
+                  {mobileMenuOpen ? (
+                    <X className="block h-6 w-6" aria-hidden="true" />
+                  ) : (
+                    <Menu className="block h-6 w-6" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Mobile menu, show/hide based on mobile menu state */}
+        {mobileMenuOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black/95 border-t border-gray-800/50">
+              <Link
+                to="/features"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Features
+              </Link>
+              <Link
+                to="/how-it-works"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                How It Works
+              </Link>
+              <Link
+                to="/pricing"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Pricing
+              </Link>
+              <Link
+                to="/contact"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Contact Us
+              </Link>
+              <Link
+                to="/signup"
+                className="block px-3 py-2 rounded-md text-base font-medium text-purple-500 border border-purple-500 hover:bg-purple-500 hover:text-white text-center mt-4"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Sign Up
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
       
       {/* Main Content */}
