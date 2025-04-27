@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,9 +10,22 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { authState, logout } = useAuth();
+  const { isAuthenticated, isAdmin } = authState;
+  const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const handleLogout = async (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (
@@ -40,33 +54,57 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Link to="/how-it-works" className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium">How It Works</Link>
                 <Link to="/pricing" className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium">Pricing</Link>
                 <Link to="/contact" className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium">Contact Us</Link>
+                {isAuthenticated && isAdmin && (
+                  <Link to="/admin" className="text-purple-500 hover:text-purple-400 transition-colors duration-200 font-medium">Admin Panel</Link>
+                )}
               </div>
             </div>
             
             <div className="hidden md:flex items-center space-x-4">
-              <Link 
-                to="/signup" 
-                className="text-purple-500 border-2 border-purple-500/50 px-5 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition-all duration-200 font-medium transform hover:scale-105"
-              >
-                Sign Up
-              </Link>
-              <Link 
-                to="/login" 
-                className="bg-purple-500 text-white px-5 py-2 rounded-lg hover:bg-purple-600 transition-all duration-200 font-medium shadow-lg shadow-purple-500/25 transform hover:scale-105"
-              >
-                Login
-              </Link>
+              {isAuthenticated ? (
+                <Link 
+                  to="/logout" 
+                  className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Link>
+              ) : (
+                <>
+                  <Link 
+                    to="/signup" 
+                    className="text-purple-500 border-2 border-purple-500/50 px-5 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition-all duration-200 font-medium transform hover:scale-105"
+                  >
+                    Sign Up
+                  </Link>
+                  <Link 
+                    to="/login" 
+                    className="bg-purple-500 text-white px-5 py-2 rounded-lg hover:bg-purple-600 transition-all duration-200 font-medium shadow-lg shadow-purple-500/25 transform hover:scale-105"
+                  >
+                    Login
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile menu button */}
             <div className="flex items-center md:hidden">
               <div className="flex items-center space-x-2">
-                <Link 
-                  to="/login" 
-                  className="bg-purple-500 text-white px-3 py-1.5 text-sm rounded-lg hover:bg-purple-600 transition-all duration-200 font-medium shadow-lg shadow-purple-500/25"
-                >
-                  Login
-                </Link>
+                {isAuthenticated ? (
+                  <button
+                    onClick={handleLogout}
+                    className="text-gray-300 hover:text-purple-500 transition-colors duration-200 text-sm"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <Link 
+                    to="/login" 
+                    className="bg-purple-500 text-white px-3 py-1.5 text-sm rounded-lg hover:bg-purple-600 transition-all duration-200 font-medium shadow-lg shadow-purple-500/25"
+                  >
+                    Login
+                  </Link>
+                )}
                 <button
                   type="button"
                   onClick={toggleMobileMenu}
@@ -115,13 +153,24 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               >
                 Contact Us
               </Link>
-              <Link
-                to="/signup"
-                className="block px-3 py-2 rounded-md text-base font-medium text-purple-500 border border-purple-500 hover:bg-purple-500 hover:text-white text-center mt-4"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Sign Up
-              </Link>
+              {isAuthenticated && isAdmin && (
+                <Link
+                  to="/admin"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-purple-500 hover:text-white hover:bg-purple-700"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Admin Panel
+                </Link>
+              )}
+              {!isAuthenticated && (
+                <Link
+                  to="/signup"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-purple-500 border border-purple-500 hover:bg-purple-500 hover:text-white text-center mt-4"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              )}
             </div>
           </div>
         )}

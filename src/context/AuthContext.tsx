@@ -1,5 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { User as FirebaseUser } from 'firebase/auth';
 import { AuthState, User } from '../types';
+import { 
+  signIn, 
+  signUp, 
+  signOutUser, 
+  getUserData,
+  onAuthChanged,
+  updateSubscription
+} from '../firebase/auth';
 
 // Initial auth state
 const initialState: AuthState = {
@@ -7,6 +16,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isSubscribed: false,
   isAgeVerified: localStorage.getItem('isAgeVerified') === 'true',
+  isAdmin: false,
 };
 
 // Create context
@@ -14,14 +24,14 @@ const AuthContext = createContext<{
   authState: AuthState;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   verifyAge: () => void;
   subscribe: () => Promise<void>;
 }>({
   authState: initialState,
   login: async () => {},
   signup: async () => {},
-  logout: () => {},
+  logout: async () => {},
   verifyAge: () => {},
   subscribe: async () => {},
 });
@@ -29,68 +39,147 @@ const AuthContext = createContext<{
 // Context provider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState>(initialState);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const user = JSON.parse(storedUser) as User;
+    // In development mode, directly set admin user for testing
+    if (process.env.NODE_ENV === 'development') {
+      const user: User = {
+        id: 'mock-admin-uid',
+        email: 'pornlabai@gmail.com',
+        isSubscribed: true,
+        isAgeVerified: true,
+        isAdmin: true,
+      };
+      
       setAuthState({
         user,
         isAuthenticated: true,
-        isSubscribed: user.isSubscribed,
-        isAgeVerified: localStorage.getItem('isAgeVerified') === 'true',
+        isSubscribed: true,
+        isAgeVerified: true,
+        isAdmin: true,
       });
+      
+      setLoading(false);
+      return () => {}; // No cleanup needed for mock
+    }
+
+    // For production, listen for auth state changes
+    try {
+      const unsubscribe = onAuthChanged(async (firebaseUser) => {
+        if (firebaseUser) {
+          // User is signed in
+          try {
+            // Get additional user data from Firestore
+            const userData = await getUserData(firebaseUser.uid);
+
+            if (userData) {
+              const user: User = {
+                id: firebaseUser.uid,
+                email: firebaseUser.email || '',
+                isSubscribed: userData.isSubscribed || false,
+                isAgeVerified: true,
+                isAdmin: userData.isAdmin || false,
+              };
+
+              setAuthState({
+                user,
+                isAuthenticated: true,
+                isSubscribed: user.isSubscribed,
+                isAgeVerified: localStorage.getItem('isAgeVerified') === 'true',
+                isAdmin: user.isAdmin,
+              });
+            }
+          } catch (error) {
+            console.error('Error getting user data:', error);
+          }
+        } else {
+          // User is signed out
+          setAuthState({
+            ...initialState,
+            isAgeVerified: localStorage.getItem('isAgeVerified') === 'true',
+          });
+        }
+        setLoading(false);
+      });
+
+      // Cleanup subscription on unmount
+      return () => unsubscribe();
+    } catch (error) {
+      console.error('Firebase initialization error:', error);
+      // If Firebase fails to initialize, continue with the default state
+      setLoading(false);
+      return () => {}; // Return empty cleanup function
     }
   }, []);
 
-  // Mock login function
+  // Login function
   const login = async (email: string, password: string) => {
-    // This would be an API call in a real app
-    const user: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      email,
-      isSubscribed: false,
-      isAgeVerified: true,
-    };
-
-    localStorage.setItem('user', JSON.stringify(user));
-    
-    setAuthState({
-      user,
-      isAuthenticated: true,
-      isSubscribed: user.isSubscribed,
-      isAgeVerified: true,
-    });
+    try {
+      const userCredential = await signIn(email, password);
+      const userData = await getUserData(userCredential.user.uid);
+      
+      if (userData) {
+        const user: User = {
+          id: userCredential.user.uid,
+          email: userCredential.user.email || '',
+          isSubscribed: userData.isSubscribed || false,
+          isAgeVerified: true,
+          isAdmin: userData.isAdmin || false,
+        };
+        
+        setAuthState({
+          user,
+          isAuthenticated: true,
+          isSubscribed: user.isSubscribed,
+          isAgeVerified: localStorage.getItem('isAgeVerified') === 'true',
+          isAdmin: user.isAdmin,
+        });
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
-  // Mock signup function
+  // Signup function
   const signup = async (email: string, password: string) => {
-    // This would create a new user through an API in a real app
-    const user: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      email,
-      isSubscribed: false,
-      isAgeVerified: true,
-    };
-
-    localStorage.setItem('user', JSON.stringify(user));
-    
-    setAuthState({
-      user,
-      isAuthenticated: true,
-      isSubscribed: false,
-      isAgeVerified: true,
-    });
+    try {
+      const userCredential = await signUp(email, password);
+      
+      const user: User = {
+        id: userCredential.user.uid,
+        email: userCredential.user.email || '',
+        isSubscribed: false,
+        isAgeVerified: true,
+        isAdmin: false,
+      };
+      
+      setAuthState({
+        user,
+        isAuthenticated: true,
+        isSubscribed: false,
+        isAgeVerified: localStorage.getItem('isAgeVerified') === 'true',
+        isAdmin: false,
+      });
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw error;
+    }
   };
 
   // Logout function
-  const logout = () => {
-    localStorage.removeItem('user');
-    setAuthState({
-      ...initialState,
-      isAgeVerified: authState.isAgeVerified,
-    });
+  const logout = async () => {
+    try {
+      await signOutUser();
+      setAuthState({
+        ...initialState,
+        isAgeVerified: authState.isAgeVerified,
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
   };
 
   // Age verification function
@@ -105,20 +194,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Subscribe function
   const subscribe = async () => {
     if (authState.user) {
-      const updatedUser = {
-        ...authState.user,
-        isSubscribed: true,
-      };
-      
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      
-      setAuthState({
-        ...authState,
-        user: updatedUser,
-        isSubscribed: true,
-      });
+      try {
+        await updateSubscription(authState.user.id, true);
+        
+        const updatedUser = {
+          ...authState.user,
+          isSubscribed: true,
+        };
+        
+        setAuthState({
+          ...authState,
+          user: updatedUser,
+          isSubscribed: true,
+        });
+      } catch (error) {
+        console.error('Subscription error:', error);
+        throw error;
+      }
     }
   };
+
+  if (loading) {
+    return <div>Loading authentication...</div>;
+  }
 
   return (
     <AuthContext.Provider

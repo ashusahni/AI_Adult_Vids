@@ -1,9 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook, FaTwitter } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export const LoginPage = () => {
+  const [email, setEmail] = useState(process.env.NODE_ENV === 'development' ? 'pornlabai@gmail.com' : '');
+  const [password, setPassword] = useState(process.env.NODE_ENV === 'development' ? 'pornlabai' : '');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !password) {
+      setError('Please enter both email and password.');
+      return;
+    }
+    
+    try {
+      setError('');
+      setLoading(true);
+      await login(email, password);
+      navigate('/');
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(err.message || 'Failed to log in. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to quickly set admin credentials for testing
+  const setAdminCredentials = () => {
+    setEmail('pornlabai@gmail.com');
+    setPassword('pornlabai');
+  };
+
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Image Section */}
@@ -26,17 +61,25 @@ export const LoginPage = () => {
       <div className="w-full lg:w-1/2 bg-gradient-to-br from-purple-900 to-black p-8 lg:p-24 flex items-center">
         <div className="w-full max-w-md mx-auto space-y-8">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-white mb-2">Login to PronLab AI</h1>
-            <p className="text-gray-400">Welcome back! Continue your pronunciation journey.</p>
+            <h1 className="text-3xl font-bold text-white mb-2">Login to PornLab AI</h1>
+            <p className="text-gray-400">Welcome back! Continue your content creation journey.</p>
           </div>
 
-          <div className="space-y-6">
+          {error && (
+            <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-4">
               <div>
                 <label htmlFor="email" className="sr-only">Email address</label>
                 <input
                   type="email"
                   id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email address"
                   className="w-full px-4 py-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500 transition-all"
                 />
@@ -47,6 +90,8 @@ export const LoginPage = () => {
                 <input
                   type="password"
                   id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
                   className="w-full px-4 py-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500 transition-all"
                 />
@@ -73,9 +118,24 @@ export const LoginPage = () => {
               </div>
             </div>
 
-            <button className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors">
-              Continue
+            <button 
+              type="submit"
+              disabled={loading}
+              className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-70"
+            >
+              {loading ? 'Logging in...' : 'Continue'}
             </button>
+
+            {/* Dev Mode: Quick Admin Login */}
+            {process.env.NODE_ENV === 'development' && (
+              <button
+                type="button"
+                onClick={setAdminCredentials}
+                className="w-full bg-gray-700 text-white py-2 rounded-lg font-medium hover:bg-gray-600 transition-colors text-sm"
+              >
+                Set Admin Credentials
+              </button>
+            )}
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -87,17 +147,26 @@ export const LoginPage = () => {
             </div>
 
             <div className="space-y-4">
-              <button className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-gray-700 text-white hover:bg-gray-800 transition-colors">
+              <button 
+                type="button"
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-gray-700 text-white hover:bg-gray-800 transition-colors"
+              >
                 <FcGoogle className="w-5 h-5" />
                 Continue with Google
               </button>
-              
-              <button className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-gray-700 text-white hover:bg-gray-800 transition-colors">
+
+              <button 
+                type="button"
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-gray-700 text-white hover:bg-gray-800 transition-colors"
+              >
                 <FaFacebook className="w-5 h-5 text-blue-500" />
                 Continue with Facebook
               </button>
 
-              <button className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-gray-700 text-white hover:bg-gray-800 transition-colors">
+              <button 
+                type="button"
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-gray-700 text-white hover:bg-gray-800 transition-colors"
+              >
                 <FaTwitter className="w-5 h-5 text-blue-400" />
                 Continue with Twitter
               </button>
@@ -107,7 +176,7 @@ export const LoginPage = () => {
               Don't have an account?{' '}
               <Link to="/signup" className="text-purple-500 hover:text-purple-400">Sign up</Link>
             </p>
-          </div>
+          </form>
         </div>
       </div>
     </div>

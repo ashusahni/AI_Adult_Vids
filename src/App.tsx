@@ -14,6 +14,7 @@ const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage'));
 const PricingPage = lazy(() => import('./pages/PricingPage'));
 const FeaturesPage = lazy(() => import('./pages/FeaturesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
+const AdminPanel = lazy(() => import('./pages/AdminPanel'));
 
 function App() {
   const [ageVerified, setAgeVerified] = useState(false);
@@ -72,6 +73,7 @@ function App() {
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/features" element={<FeaturesPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/admin" element={<AdminPanel />} />
             </Routes>
           </Suspense>
         </Layout>
