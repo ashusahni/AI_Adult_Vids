@@ -5,8 +5,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export const LoginPage = () => {
-  const [email, setEmail] = useState(process.env.NODE_ENV === 'development' ? 'pornlabai@gmail.com' : '');
-  const [password, setPassword] = useState(process.env.NODE_ENV === 'development' ? 'pornlabai' : '');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login, loginWithGoogle } = useAuth();
@@ -31,12 +31,6 @@ export const LoginPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Function to quickly set admin credentials for testing
-  const setAdminCredentials = () => {
-    setEmail('pornlabai@gmail.com');
-    setPassword('pornlabai');
   };
 
   // Google login handler
@@ -139,17 +133,6 @@ export const LoginPage = () => {
             >
               {loading ? 'Logging in...' : 'Continue'}
             </button>
-
-            {/* Dev Mode: Quick Admin Login */}
-            {process.env.NODE_ENV === 'development' && (
-              <button
-                type="button"
-                onClick={setAdminCredentials}
-                className="w-full bg-gray-700 text-white py-2 rounded-lg font-medium hover:bg-gray-600 transition-colors text-sm"
-              >
-                Set Admin Credentials
-              </button>
-            )}
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

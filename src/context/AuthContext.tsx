@@ -45,78 +45,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In development mode, directly set admin user for testing
-    if (process.env.NODE_ENV === 'development') {
-      const user: User = {
-        id: 'mock-admin-uid',
-        email: 'pornlabai@gmail.com',
-        isSubscribed: true,
-        isAgeVerified: true,
-        isAdmin: true,
-      };
-      
-      setAuthState({
-        user,
-        isAuthenticated: true,
-        isSubscribed: true,
-        isAgeVerified: true,
-        isAdmin: true,
-      });
-      
-      setLoading(false);
-      return () => {}; // No cleanup needed for mock
-    }
+    const unsubscribe = onAuthChanged(async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const userData = await getUserData(firebaseUser.uid);
+          if (userData) {
+            const user: User = {
+              id: firebaseUser.uid,
+              email: firebaseUser.email || '',
+              isSubscribed: userData.isSubscribed || false,
+              isAgeVerified: true,
+              isAdmin: userData.isAdmin || false,
+            };
 
-    // For production, listen for auth state changes
-    try {
-      const unsubscribe = onAuthChanged(async (firebaseUser) => {
-        if (firebaseUser) {
-          // User is signed in
-          try {
-            // Get additional user data from Firestore
-            const userData = await getUserData(firebaseUser.uid);
-
-            if (userData) {
-              const user: User = {
-                id: firebaseUser.uid,
-                email: firebaseUser.email || '',
-                isSubscribed: userData.isSubscribed || false,
-                isAgeVerified: true,
-                isAdmin: userData.isAdmin || false,
-              };
-
-              setAuthState({
-                user,
-                isAuthenticated: true,
-                isSubscribed: user.isSubscribed,
-                isAgeVerified: localStorage.getItem('isAgeVerified') === 'true',
-                isAdmin: user.isAdmin,
-              });
-            }
-          } catch (error) {
-            console.error('Error getting user data:', error);
+            setAuthState({
+              user,
+              isAuthenticated: true,
+              isSubscribed: user.isSubscribed,
+              isAgeVerified: localStorage.getItem('isAgeVerified') === 'true',
+              isAdmin: user.isAdmin,
+            });
           }
-        } else {
-          // User is signed out
-          setAuthState({
-            ...initialState,
-            isAgeVerified: localStorage.getItem('isAgeVerified') === 'true',
-          });
+        } catch (error) {
+          console.error('Error getting user data:', error);
         }
-        setLoading(false);
-      });
-
-      // Cleanup subscription on unmount
-      return () => unsubscribe();
-    } catch (error) {
-      console.error('Firebase initialization error:', error);
-      // If Firebase fails to initialize, continue with the default state
+      } else {
+        setAuthState({
+          ...initialState,
+          isAgeVerified: localStorage.getItem('isAgeVerified') === 'true',
+        });
+      }
       setLoading(false);
-      return () => {}; // Return empty cleanup function
-    }
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  // Login function
   const login = async (email: string, password: string) => {
     try {
       const userCredential = await signIn(email, password);
@@ -145,7 +109,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Signup function
   const signup = async (email: string, password: string) => {
     try {
       const userCredential = await signUp(email, password);
@@ -171,7 +134,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Logout function
   const logout = async () => {
     try {
       await signOutUser();
@@ -185,7 +147,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Age verification function
   const verifyAge = () => {
     localStorage.setItem('isAgeVerified', 'true');
     setAuthState({
@@ -194,7 +155,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  // Subscribe function
   const subscribe = async () => {
     if (authState.user) {
       try {
@@ -217,7 +177,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Google login function
   const loginWithGoogle = async () => {
     try {
       const result = await signInWithGoogle();
