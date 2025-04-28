@@ -5,7 +5,9 @@ import {
   UserCredential,
   updateProfile,
   onAuthStateChanged,
-  User as FirebaseUser
+  User as FirebaseUser,
+  GoogleAuthProvider,
+  signInWithPopup
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from './config';
@@ -183,4 +185,23 @@ export const onAuthChanged = (callback: (user: FirebaseUser | null) => void) => 
   }
   
   return onAuthStateChanged(auth, callback);
+};
+
+// Google sign-in
+export const signInWithGoogle = async () => {
+  const provider = new GoogleAuthProvider();
+  const result = await signInWithPopup(auth, provider);
+  const user = result.user;
+
+  // Check if user document exists, if not, create it
+  const userDoc = await getDoc(doc(db, 'users', user.uid));
+  if (!userDoc.exists()) {
+    await setDoc(doc(db, 'users', user.uid), {
+      email: user.email,
+      isSubscribed: false,
+      isAdmin: false,
+      createdAt: new Date().toISOString(),
+    });
+  }
+  return result;
 }; 

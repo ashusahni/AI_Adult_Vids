@@ -9,7 +9,7 @@ export const LoginPage = () => {
   const [password, setPassword] = useState(process.env.NODE_ENV === 'development' ? 'pornlabai' : '');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -37,6 +37,20 @@ export const LoginPage = () => {
   const setAdminCredentials = () => {
     setEmail('pornlabai@gmail.com');
     setPassword('pornlabai');
+  };
+
+  // Google login handler
+  const handleGoogleLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      await loginWithGoogle();
+      navigate('/');
+    } catch (err: any) {
+      setError(err.message || 'Google login failed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -149,7 +163,9 @@ export const LoginPage = () => {
             <div className="space-y-4">
               <button 
                 type="button"
-                className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-gray-700 text-white hover:bg-gray-800 transition-colors"
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-gray-700 text-white hover:bg-gray-800 transition-colors disabled:opacity-70"
               >
                 <FcGoogle className="w-5 h-5" />
                 Continue with Google

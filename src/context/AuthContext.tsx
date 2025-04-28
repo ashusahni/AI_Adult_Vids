@@ -7,7 +7,8 @@ import {
   signOutUser, 
   getUserData,
   onAuthChanged,
-  updateSubscription
+  updateSubscription,
+  signInWithGoogle
 } from '../firebase/auth';
 
 // Initial auth state
@@ -27,6 +28,7 @@ const AuthContext = createContext<{
   logout: () => Promise<void>;
   verifyAge: () => void;
   subscribe: () => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
 }>({
   authState: initialState,
   login: async () => {},
@@ -34,6 +36,7 @@ const AuthContext = createContext<{
   logout: async () => {},
   verifyAge: () => {},
   subscribe: async () => {},
+  loginWithGoogle: async () => {},
 });
 
 // Context provider component
@@ -214,6 +217,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Google login function
+  const loginWithGoogle = async () => {
+    try {
+      const result = await signInWithGoogle();
+      const user = result.user;
+      const userData = await getUserData(user.uid);
+      if (userData) {
+        setAuthState({
+          user: {
+            id: user.uid,
+            email: user.email || '',
+            isSubscribed: userData.isSubscribed || false,
+            isAgeVerified: true,
+            isAdmin: userData.isAdmin || false,
+          },
+          isAuthenticated: true,
+          isSubscribed: userData.isSubscribed || false,
+          isAgeVerified: localStorage.getItem('isAgeVerified') === 'true',
+          isAdmin: userData.isAdmin || false,
+        });
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      throw error;
+    }
+  };
+
   if (loading) {
     return <div>Loading authentication...</div>;
   }
@@ -227,6 +257,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout,
         verifyAge,
         subscribe,
+        loginWithGoogle,
       }}
     >
       {children}
