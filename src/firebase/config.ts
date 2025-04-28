@@ -67,12 +67,12 @@ if (useMockServices) {
 } else {
   // Your web app's Firebase configuration
   const firebaseConfig = {
-    apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "AIzaSyDD5e-1Qj8pAKC0IiCjCpXIl4q1hV5s3W8",
-    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "pornlabai-app.firebaseapp.com",
-    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "pornlabai-app",
-    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "pornlabai-app.appspot.com",
-    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "12345678910",
-    appId: process.env.REACT_APP_FIREBASE_APP_ID || "1:12345678910:web:abc123def456"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID
   };
 
   try {

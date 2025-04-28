@@ -54,9 +54,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Link to="/how-it-works" className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium">How It Works</Link>
                 <Link to="/pricing" className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium">Pricing</Link>
                 <Link to="/contact" className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium">Contact Us</Link>
-                {isAuthenticated && isAdmin && (
-                  <Link to="/admin" className="text-purple-500 hover:text-purple-400 transition-colors duration-200 font-medium">Admin Panel</Link>
-                )}
               </div>
             </div>
             
@@ -153,15 +150,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               >
                 Contact Us
               </Link>
-              {isAuthenticated && isAdmin && (
-                <Link
-                  to="/admin"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-purple-500 hover:text-white hover:bg-purple-700"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Admin Panel
-                </Link>
-              )}
               {!isAuthenticated && (
                 <Link
                   to="/signup"
