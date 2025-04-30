@@ -1,21 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Plus, Save, Trash2, Upload } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 import { addVideo, addImage, getVideos, getImages, deleteVideo, deleteImage } from '../firebase/content';
 
 const AdminPanel: React.FC = () => {
-  const navigate = useNavigate();
-  const { authState } = useAuth();
-  const { isAuthenticated, isAdmin } = authState;
-  
-  // Redirect if not authenticated or not admin
-  React.useEffect(() => {
-    if (!isAuthenticated || !isAdmin) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, isAdmin, navigate]);
-
   const [activeTab, setActiveTab] = useState<'videos' | 'images'>('videos');
   const [videos, setVideos] = useState<any[]>([]);
   const [images, setImages] = useState<any[]>([]);
@@ -118,10 +105,8 @@ const AdminPanel: React.FC = () => {
       }
     };
 
-    if (isAuthenticated && isAdmin) {
-      loadContent();
-    }
-  }, [isAuthenticated, isAdmin]);
+    loadContent();
+  }, []);
 
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
