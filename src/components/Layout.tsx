@@ -59,13 +59,21 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             
             <div className="hidden md:flex items-center space-x-4">
               {isAuthenticated ? (
-                <Link 
-                  to="/logout" 
-                  className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </Link>
+                <>
+                  <Link 
+                    to="/account" 
+                    className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium"
+                  >
+                    My Account
+                  </Link>
+                  <Link 
+                    to="/logout" 
+                    className="text-gray-300 hover:text-purple-500 transition-colors duration-200 font-medium"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Link>
+                </>
               ) : (
                 <>
                   <Link 
@@ -150,7 +158,15 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               >
                 Contact Us
               </Link>
-              {!isAuthenticated && (
+              {isAuthenticated ? (
+                <Link
+                  to="/account"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Account
+                </Link>
+              ) : (
                 <Link
                   to="/signup"
                   className="block px-3 py-2 rounded-md text-base font-medium text-purple-500 border border-purple-500 hover:bg-purple-500 hover:text-white text-center mt-4"
