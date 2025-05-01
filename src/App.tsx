@@ -3,6 +3,13 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { AuthProvider } from './context/AuthContext';
 import './index.css';
+import AdminLayout from './components/admin/AdminLayout';
+import Dashboard from './components/admin/Dashboard';
+import Users from './components/admin/Users';
+import ContentManagement from './components/admin/ContentManagement';
+import SubscriptionPlans from './components/admin/SubscriptionPlans';
+import Payments from './components/admin/Payments';
+import Analytics from './components/admin/Analytics';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
@@ -74,7 +81,14 @@ function App() {
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/features" element={<FeaturesPage />} />
               <Route path="/contact" element={<ContactPage />} />
-              <Route path="/admin" element={<AdminPanel />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="users" element={<Users />} />
+                <Route path="content" element={<ContentManagement />} />
+                <Route path="subscriptions" element={<SubscriptionPlans />} />
+                <Route path="payments" element={<Payments />} />
+                <Route path="analytics" element={<Analytics />} />
+              </Route>
               <Route path="/account" element={<UserAccount />} />
             </Routes>
           </Suspense>

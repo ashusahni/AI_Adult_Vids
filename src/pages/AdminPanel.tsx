@@ -365,365 +365,237 @@ const AdminPanel: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white py-10">
-      <div className="max-w-[1440px] mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center">Admin Panel</h1>
-        
-        {/* Tabs */}
-        <div className="flex justify-center mb-8">
-          <div className="flex bg-gray-800 rounded-lg p-1">
-            <button
-              className={`px-6 py-2 rounded-md ${
-                activeTab === 'videos' ? 'bg-purple-600' : 'bg-transparent hover:bg-gray-700'
-              }`}
-              onClick={() => setActiveTab('videos')}
-            >
-              Videos
-            </button>
-            <button
-              className={`px-6 py-2 rounded-md ${
-                activeTab === 'images' ? 'bg-purple-600' : 'bg-transparent hover:bg-gray-700'
-              }`}
-              onClick={() => setActiveTab('images')}
-            >
-              Images
-            </button>
-          </div>
+    <div className="min-h-screen">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-purple-400">Content Management</h1>
+        <div className="flex gap-4">
+          <button
+            onClick={() => setActiveTab('videos')}
+            className={`px-4 py-2 rounded-lg transition-colors ${
+              activeTab === 'videos'
+                ? 'bg-purple-900 text-purple-400'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            Videos
+          </button>
+          <button
+            onClick={() => setActiveTab('images')}
+            className={`px-4 py-2 rounded-lg transition-colors ${
+              activeTab === 'images'
+                ? 'bg-purple-900 text-purple-400'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            Images
+          </button>
         </div>
-
-        {/* Videos Tab */}
-        {activeTab === 'videos' && (
-          <div>
-            <div className="bg-gray-800 rounded-xl p-6 mb-8">
-              <h2 className="text-xl font-semibold mb-4 flex items-center">
-                <Plus className="mr-2" size={20} />
-                Add New Video
-              </h2>
-              
-              <form onSubmit={handleVideoSubmit}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <div className="mb-4">
-                      <label className="block text-gray-400 mb-2">Video Title</label>
-                      <input
-                        type="text"
-                        name="title"
-                        value={newVideo.title}
-                        onChange={handleVideoChange}
-                        className="w-full bg-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        placeholder="Enter video title"
-                        required
-                      />
-                    </div>
-                    
-                    <div className="mb-4">
-                      <label className="block text-gray-400 mb-2">Description</label>
-                      <textarea
-                        name="description"
-                        value={newVideo.description}
-                        onChange={handleVideoChange}
-                        className="w-full bg-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[100px]"
-                        placeholder="Enter video description"
-                        required
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <label className="block text-gray-400 mb-2">Duration</label>
-                        <input
-                          type="text"
-                          name="duration"
-                          value={newVideo.duration}
-                          onChange={handleVideoChange}
-                          className="w-full bg-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                          placeholder="00:00"
-                          required
-                        />
-                      </div>
-                      
-                      <div className="flex items-center">
-                        <label className="flex items-center mt-4 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            name="premium"
-                            checked={newVideo.premium}
-                            onChange={handleVideoChange}
-                            className="form-checkbox h-5 w-5 text-purple-600 rounded focus:ring-purple-500 border-gray-600 bg-gray-700"
-                          />
-                          <span className="ml-2 text-gray-300">Premium Content</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="mb-4">
-                      <label className="block text-gray-400 mb-2">Upload Video</label>
-                      <div className="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center">
-                        <input
-                          type="file"
-                          onChange={handleVideoFileChange}
-                          className="hidden"
-                          id="video-upload"
-                          accept="video/*"
-                        />
-                        <label
-                          htmlFor="video-upload"
-                          className="cursor-pointer flex flex-col items-center justify-center py-6"
-                        >
-                          <Upload className="mb-2" size={30} />
-                          <span className="text-gray-400 mb-2">
-                            {videoFile ? videoFile.name : 'Click to upload video file'}
-                          </span>
-                          <span className="text-xs text-gray-500">MP4, WebM or AVI. Max 500MB.</span>
-                        </label>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <label className="block text-gray-400 mb-2">Upload Thumbnail</label>
-                      <div className="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center">
-                        <input
-                          type="file"
-                          onChange={handleThumbnailFileChange}
-                          className="hidden"
-                          id="thumbnail-upload"
-                          accept="image/*"
-                        />
-                        <label
-                          htmlFor="thumbnail-upload"
-                          className="cursor-pointer flex flex-col items-center justify-center"
-                        >
-                          {newVideo.thumbnail ? (
-                            <img
-                              src={newVideo.thumbnail}
-                              alt="Thumbnail preview"
-                              className="h-32 object-cover rounded-lg mb-2"
-                            />
-                          ) : (
-                            <Upload className="mb-2" size={30} />
-                          )}
-                          <span className="text-gray-400 mb-2">
-                            {thumbnailFile ? thumbnailFile.name : 'Click to upload thumbnail'}
-                          </span>
-                          <span className="text-xs text-gray-500">JPG, PNG or WebP. 16:9 ratio recommended.</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-6 text-right">
-                  <button
-                    type="submit"
-                    disabled={videoUploading}
-                    className="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg flex items-center ml-auto disabled:opacity-50"
-                  >
-                    {videoUploading ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="mr-2" size={20} />
-                        Save Video
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-            
-            {/* Video List */}
-            <h2 className="text-xl font-semibold mb-4">Manage Videos</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {videos.map((video) => (
-                <div key={video.id} className="bg-gray-800 rounded-xl overflow-hidden">
-                  <div className="relative aspect-video">
-                    <img
-                      src={video.thumbnail}
-                      alt={video.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded text-xs">
-                      {video.duration}
-                    </div>
-                    {video.premium && (
-                      <div className="absolute top-2 left-2 bg-purple-600 px-2 py-1 rounded text-xs font-medium">
-                        PREMIUM
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-medium mb-1 line-clamp-1">{video.title}</h3>
-                    <p className="text-gray-400 text-sm mb-3 line-clamp-2">{video.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-500">{new Date(video.uploadDate).toLocaleDateString()}</span>
-                      <button
-                        onClick={() => handleDeleteVideo(video.id)}
-                        className="text-red-500 hover:text-red-400 p-1"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Images Tab */}
-        {activeTab === 'images' && (
-          <div>
-            <div className="bg-gray-800 rounded-xl p-6 mb-8">
-              <h2 className="text-xl font-semibold mb-4 flex items-center">
-                <Plus className="mr-2" size={20} />
-                Add New Image
-              </h2>
-              
-              <form onSubmit={handleImageSubmit}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <div className="mb-4">
-                      <label className="block text-gray-400 mb-2">Image Title</label>
-                      <input
-                        type="text"
-                        name="title"
-                        value={newImage.title}
-                        onChange={handleImageChange}
-                        className="w-full bg-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        placeholder="Enter image title"
-                        required
-                      />
-                    </div>
-                    
-                    <div className="mb-4">
-                      <label className="block text-gray-400 mb-2">Description</label>
-                      <textarea
-                        name="description"
-                        value={newImage.description}
-                        onChange={handleImageChange}
-                        className="w-full bg-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[100px]"
-                        placeholder="Enter image description"
-                        required
-                      />
-                    </div>
-                    
-                    <div className="mb-4">
-                      <label className="flex items-center mt-4 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="premium"
-                          checked={newImage.premium}
-                          onChange={handleImageChange}
-                          className="form-checkbox h-5 w-5 text-purple-600 rounded focus:ring-purple-500 border-gray-600 bg-gray-700"
-                        />
-                        <span className="ml-2 text-gray-300">Premium Content</span>
-                      </label>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="mb-4">
-                      <label className="block text-gray-400 mb-2">Upload Image</label>
-                      <div className="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center">
-                        <input
-                          type="file"
-                          onChange={handleImageFileChange}
-                          className="hidden"
-                          id="image-upload"
-                          accept="image/*"
-                        />
-                        <label
-                          htmlFor="image-upload"
-                          className="cursor-pointer flex flex-col items-center justify-center"
-                        >
-                          {newImage.url ? (
-                            <img
-                              src={newImage.url}
-                              alt="Image preview"
-                              className="h-48 object-contain rounded-lg mb-2"
-                            />
-                          ) : (
-                            <Upload className="mb-2" size={30} />
-                          )}
-                          <span className="text-gray-400 mb-2">
-                            {imageFile ? imageFile.name : 'Click to upload image'}
-                          </span>
-                          <span className="text-xs text-gray-500">JPG, PNG or WebP. Max 10MB.</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-6 text-right">
-                  <button
-                    type="submit"
-                    disabled={imageUploading}
-                    className="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg flex items-center ml-auto disabled:opacity-50"
-                  >
-                    {imageUploading ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="mr-2" size={20} />
-                        Save Image
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-            
-            {/* Image List */}
-            <h2 className="text-xl font-semibold mb-4">Manage Images</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {images.map((image) => (
-                <div key={image.id} className="bg-gray-800 rounded-xl overflow-hidden">
-                  <div className="relative aspect-video">
-                    <img
-                      src={image.url}
-                      alt={image.title}
-                      className="w-full h-full object-cover"
-                    />
-                    {image.premium && (
-                      <div className="absolute top-2 left-2 bg-purple-600 px-2 py-1 rounded text-xs font-medium">
-                        PREMIUM
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-medium mb-1 line-clamp-1">{image.title}</h3>
-                    <p className="text-gray-400 text-sm mb-3 line-clamp-2">{image.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-500">{new Date(image.uploadDate).toLocaleDateString()}</span>
-                      <button
-                        onClick={() => handleDeleteImage(image.id)}
-                        className="text-red-500 hover:text-red-400 p-1"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
+
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-400"></div>
+        </div>
+      ) : (
+        <>
+          {/* Add New Content Form */}
+          <div className="bg-gray-800 rounded-lg p-6 mb-8">
+            <h2 className="text-xl font-semibold mb-4 text-purple-400">
+              Add New {activeTab === 'videos' ? 'Video' : 'Image'}
+            </h2>
+            <form
+              onSubmit={activeTab === 'videos' ? handleVideoSubmit : handleImageSubmit}
+              className="space-y-4"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={activeTab === 'videos' ? newVideo.title : newImage.title}
+                    onChange={activeTab === 'videos' ? handleVideoChange : handleImageChange}
+                    className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Description
+                  </label>
+                  <input
+                    type="text"
+                    name="description"
+                    value={activeTab === 'videos' ? newVideo.description : newImage.description}
+                    onChange={activeTab === 'videos' ? handleVideoChange : handleImageChange}
+                    className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              {activeTab === 'videos' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                      Duration (MM:SS)
+                    </label>
+                    <input
+                      type="text"
+                      name="duration"
+                      value={newVideo.duration}
+                      onChange={handleVideoChange}
+                      className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                      Premium Content
+                    </label>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name="premium"
+                        checked={newVideo.premium}
+                        onChange={handleVideoChange}
+                        className="w-4 h-4 text-purple-500 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"
+                      />
+                      <span className="ml-2 text-gray-300">Premium</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'images' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Premium Content
+                  </label>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="premium"
+                      checked={newImage.premium}
+                      onChange={handleImageChange}
+                      className="w-4 h-4 text-purple-500 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"
+                    />
+                    <span className="ml-2 text-gray-300">Premium</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {activeTab === 'videos' ? (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">
+                        Video File
+                      </label>
+                      <input
+                        type="file"
+                        accept="video/*"
+                        onChange={handleVideoFileChange}
+                        className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-1">
+                        Thumbnail
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleThumbnailFileChange}
+                        className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        required
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                      Image File
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageFileChange}
+                      className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      required
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={activeTab === 'videos' ? videoUploading : imageUploading}
+                  className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {activeTab === 'videos' ? videoUploading ? 'Uploading...' : 'Upload Video' : imageUploading ? 'Uploading...' : 'Upload Image'}
+                  <Upload className="w-4 h-4" />
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Content List */}
+          <div className="bg-gray-800 rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-4 text-purple-400">
+              {activeTab === 'videos' ? 'Videos' : 'Images'}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {(activeTab === 'videos' ? videos : images).map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-gray-700 rounded-lg overflow-hidden shadow-lg"
+                >
+                  <div className="relative">
+                    <img
+                      src={activeTab === 'videos' ? item.thumbnail : item.url}
+                      alt={item.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    {item.premium && (
+                      <span className="absolute top-2 right-2 bg-purple-600 text-white px-2 py-1 rounded text-sm">
+                        Premium
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold text-gray-100 mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-300 text-sm mb-4">{item.description}</p>
+                    {activeTab === 'videos' && (
+                      <p className="text-gray-400 text-sm mb-4">
+                        Duration: {item.duration}
+                      </p>
+                    )}
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() =>
+                          activeTab === 'videos'
+                            ? handleDeleteVideo(item.id)
+                            : handleDeleteImage(item.id)
+                        }
+                        className="text-red-400 hover:text-red-300 transition-colors"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
