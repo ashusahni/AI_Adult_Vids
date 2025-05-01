@@ -1,59 +1,62 @@
 export interface User {
   id: string;
-  email: string;
   username: string;
-  createdAt: string;
-  lastLogin: string;
-  isSubscribed: boolean;
-  subscriptionTier: 'free' | 'basic' | 'premium';
-  subscriptionEndDate?: string;
-  isSuspended: boolean;
+  email: string;
   status: 'active' | 'suspended' | 'deleted';
+  isSubscribed: boolean;
+  subscriptionTier: string;
+  createdAt: any; // Firebase Timestamp
+  updatedAt?: any; // Firebase Timestamp
+  deletedAt?: any; // Firebase Timestamp
 }
 
 export interface SubscriptionPlan {
   id: string;
   name: string;
+  description: string;
   price: number;
-  duration: number; // in months
+  duration: number;
   features: string[];
   isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: any; // Firebase Timestamp
+  updatedAt: any; // Firebase Timestamp
 }
 
 export interface Payment {
   id: string;
   userId: string;
-  userEmail: string;
   amount: number;
+  status: 'pending' | 'completed' | 'failed';
   planId: string;
-  planName: string;
-  status: 'completed' | 'pending' | 'failed';
-  paymentMethod: string;
-  createdAt: string;
+  createdAt: any; // Firebase Timestamp
+}
+
+export interface Content {
+  id: string;
+  title: string;
+  description: string;
+  type: 'video' | 'image';
+  url: string;
+  thumbnail: string;
+  duration?: string;
+  premium: boolean;
+  views: number;
+  likes: number;
+  uploadDate: any; // Firebase Timestamp
+}
+
+export interface DailyStat {
+  date: string;
+  registrations: number;
+  revenue: number;
 }
 
 export interface Analytics {
   totalUsers: number;
-  activeUsers: number;
   premiumUsers: number;
-  totalViews: number;
-  totalLikes: number;
   totalRevenue: number;
+  totalViews: number;
   recentRegistrations: User[];
-  popularContent: {
-    id: string;
-    title: string;
-    type: 'video' | 'image';
-    views: number;
-    likes: number;
-  }[];
-  dailyStats: {
-    date: string;
-    views: number;
-    likes: number;
-    registrations: number;
-    revenue: number;
-  }[];
+  popularContent: Content[];
+  dailyStats: DailyStat[];
 } 

@@ -1,9 +1,8 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDSOJqag5b21qQGyOEhFxLWhOUFcSlvAsQ",
   authDomain: "pornlabai-8b992.firebaseapp.com",
@@ -17,10 +16,15 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase services
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+// Initialize services
+export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const storage = getStorage(app);
 
-export { auth, db, storage };
+// Check if Firebase is initialized properly
+if (!app) {
+  throw new Error('Firebase app not initialized properly');
+}
+
+// Export app instance
 export default app; 

@@ -2,6 +2,7 @@ import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { AuthProvider } from './context/AuthContext';
+import { checkAndSeedDatabase } from './firebase/seed';
 import './index.css';
 import AdminLayout from './components/admin/AdminLayout';
 import Dashboard from './components/admin/Dashboard';
@@ -26,18 +27,43 @@ const UserAccount = lazy(() => import('./pages/UserAccount'));
 
 function App() {
   const [ageVerified, setAgeVerified] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const verified = localStorage.getItem('ageVerified');
     if (verified === 'true') {
       setAgeVerified(true);
     }
+
+    // Check and seed the database if needed
+    const initializeDatabase = async () => {
+      try {
+        await checkAndSeedDatabase();
+      } catch (error) {
+        console.error('Error initializing database:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeDatabase();
   }, []);
 
   const handleAgeVerification = () => {
     localStorage.setItem('ageVerified', 'true');
     setAgeVerified(true);
   };
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto mb-4"></div>
+          <p className="text-gray-300">Initializing...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AuthProvider>

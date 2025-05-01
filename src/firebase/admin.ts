@@ -154,72 +154,86 @@ export const getUserPayments = async (userId: string) => {
 };
 
 // Analytics
-export const getAnalytics = async (): Promise<Analytics> => {
+export const getAnalytics = async () => {
   try {
-    // Get total users
-    const usersRef = collection(db, 'users');
-    const usersSnapshot = await getDocs(usersRef);
-    const users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+    // Get users
+    const usersSnapshot = await getDocs(collection(db, 'users'));
+    const totalUsers = usersSnapshot.size;
+    const premiumUsers = usersSnapshot.docs.filter(doc => doc.data().isSubscribed).length;
     
-    // Get recent payments
-    const paymentsRef = collection(db, 'payments');
-    const paymentsQuery = query(
-      paymentsRef,
-      where('status', '==', 'completed'),
+    // Get payments for revenue
+    const paymentsSnapshot = await getDocs(collection(db, 'payments'));
+    const totalRevenue = paymentsSnapshot.docs.reduce((sum, doc) => sum + (doc.data().amount || 0), 0);
+
+    // Get content views
+    const videosSnapshot = await getDocs(collection(db, 'videos'));
+    const totalViews = videosSnapshot.docs.reduce((sum, doc) => sum + (doc.data().views || 0), 0);
+
+    // Get recent registrations
+    const recentUsersQuery = query(
+      collection(db, 'users'),
       orderBy('createdAt', 'desc'),
-      limit(30)
+      limit(5)
     );
-    const paymentsSnapshot = await getDocs(paymentsQuery);
-    const payments = paymentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Payment));
-
-    // Calculate analytics
-    const totalRevenue = payments.reduce((sum, payment) => sum + payment.amount, 0);
-    const activeUsers = users.filter(user => user.status === 'active').length;
-    const premiumUsers = users.filter(user => user.isSubscribed).length;
-
-    // Get content stats
-    const contentRef = collection(db, 'content');
-    const contentQuery = query(contentRef, orderBy('views', 'desc'), limit(10));
-    const contentSnapshot = await getDocs(contentQuery);
-    const popularContent = contentSnapshot.docs.map(doc => ({
+    const recentUsersSnapshot = await getDocs(recentUsersQuery);
+    const recentRegistrations = recentUsersSnapshot.docs.map(doc => ({
       id: doc.id,
-      ...doc.data()
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate?.() || new Date()
     }));
 
-    // Calculate daily stats for the last 30 days
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
-    const dailyStats = Array.from({ length: 30 }, (_, i) => {
+    // Get popular content
+    const popularContentQuery = query(
+      collection(db, 'videos'),
+      orderBy('views', 'desc'),
+      limit(5)
+    );
+    const popularContentSnapshot = await getDocs(popularContentQuery);
+    const popularContent = popularContentSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      uploadDate: doc.data().uploadDate?.toDate?.() || new Date()
+    }));
+
+    // Calculate daily stats for the last 7 days
+    const dailyStats = [];
+    for (let i = 6; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
+      date.setHours(0, 0, 0, 0);
       
-      const dayPayments = payments.filter(p => 
-        new Date(p.createdAt).toISOString().split('T')[0] === dateStr
-      );
-      
-      return {
-        date: dateStr,
-        revenue: dayPayments.reduce((sum, p) => sum + p.amount, 0),
-        registrations: users.filter(u => 
-          new Date(u.createdAt).toISOString().split('T')[0] === dateStr
-        ).length,
-        views: 0, // You'll need to implement view tracking
-        likes: 0  // You'll need to implement like tracking
-      };
-    });
+      const nextDate = new Date(date);
+      nextDate.setDate(date.getDate() + 1);
+
+      const dailyUsers = usersSnapshot.docs.filter(doc => {
+        const createdAt = doc.data().createdAt;
+        if (!createdAt) return false;
+        const createdDate = createdAt.toDate?.() || new Date(createdAt);
+        return createdDate >= date && createdDate < nextDate;
+      }).length;
+
+      const dailyRevenue = paymentsSnapshot.docs
+        .filter(doc => {
+          const createdAt = doc.data().createdAt;
+          if (!createdAt) return false;
+          const createdDate = createdAt.toDate?.() || new Date(createdAt);
+          return createdDate >= date && createdDate < nextDate;
+        })
+        .reduce((sum, doc) => sum + (doc.data().amount || 0), 0);
+
+      dailyStats.push({
+        date: date.toISOString(),
+        registrations: dailyUsers,
+        revenue: dailyRevenue
+      });
+    }
 
     return {
-      totalUsers: users.length,
-      activeUsers,
+      totalUsers,
       premiumUsers,
-      totalViews: popularContent.reduce((sum, content) => sum + (content.views || 0), 0),
-      totalLikes: popularContent.reduce((sum, content) => sum + (content.likes || 0), 0),
       totalRevenue,
-      recentRegistrations: users
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 10),
+      totalViews,
+      recentRegistrations,
       popularContent,
       dailyStats
     };
