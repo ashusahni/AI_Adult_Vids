@@ -119,40 +119,41 @@ const samplePayments = [
 export const seedDatabase = async () => {
   try {
     console.log('Starting database seeding...');
-    const batch = writeBatch(db);
 
-    // Add users
-    console.log('Seeding users...');
+    // First, check if users already exist
+    const usersRef = collection(db, 'users');
+    const existingUsers = await getDocs(usersRef);
+    
+    if (!existingUsers.empty) {
+      console.log('Users already exist, skipping seeding');
+      return false;
+    }
+
+    console.log('No existing users found, proceeding with seeding...');
+
+    // Add users one by one instead of using batch
     for (const user of sampleUsers) {
-      const userRef = doc(collection(db, 'users'));
-      batch.set(userRef, user);
+      try {
+        console.log('Adding user:', user.username);
+        const docRef = await addDoc(collection(db, 'users'), user);
+        console.log('Successfully added user:', user.username, 'with ID:', docRef.id);
+      } catch (error) {
+        console.error('Error adding user:', user.username, error);
+        // Continue with next user even if one fails
+      }
     }
 
-    // Add subscription plans
-    console.log('Seeding subscription plans...');
-    for (const plan of samplePlans) {
-      const planRef = doc(collection(db, 'subscriptionPlans'));
-      batch.set(planRef, plan);
+    // Verify the seeding was successful
+    const verifyUsers = await getDocs(usersRef);
+    console.log('Verification: Total users after seeding:', verifyUsers.size);
+    
+    if (verifyUsers.size === sampleUsers.length) {
+      console.log('Database seeding completed successfully');
+      return true;
+    } else {
+      console.error('Seeding verification failed: Expected', sampleUsers.length, 'users but found', verifyUsers.size);
+      return false;
     }
-
-    // Add content
-    console.log('Seeding content...');
-    for (const content of sampleContent) {
-      const contentRef = doc(collection(db, 'videos'));
-      batch.set(contentRef, content);
-    }
-
-    // Add payments
-    console.log('Seeding payments...');
-    for (const payment of samplePayments) {
-      const paymentRef = doc(collection(db, 'payments'));
-      batch.set(paymentRef, payment);
-    }
-
-    // Commit the batch
-    await batch.commit();
-    console.log('Database seeded successfully');
-    return true;
   } catch (error) {
     console.error('Error seeding database:', error);
     return false;
@@ -166,15 +167,18 @@ export const checkAndSeedDatabase = async () => {
     
     // Check if users collection is empty
     const usersRef = collection(db, 'users');
-    const usersQuery = query(usersRef, where('status', '!=', 'deleted'));
-    const usersSnapshot = await getDocs(usersQuery);
+    const usersSnapshot = await getDocs(usersRef);
     
     if (usersSnapshot.empty) {
-      console.log('No active users found, starting seeding process...');
-      return await seedDatabase();
+      console.log('No users found, starting seeding process...');
+      const seedingResult = await seedDatabase();
+      if (!seedingResult) {
+        console.error('Seeding process failed');
+      }
+      return seedingResult;
     }
     
-    console.log('Database already has data, skipping seeding');
+    console.log('Database already has users:', usersSnapshot.size);
     return false;
   } catch (error) {
     console.error('Error checking database:', error);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getUsers, updateUserStatus, deleteUser } from '../../firebase/admin';
+import { checkAndSeedDatabase } from '../../firebase/seed';
 import { User } from '../../types/admin';
 
 const formatDate = (timestamp: any) => {
@@ -18,48 +19,83 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [actionInProgress, setActionInProgress] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchUsers();
+    const initializeData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Check if database needs seeding
+        const needsSeeding = await checkAndSeedDatabase();
+        if (needsSeeding) {
+          console.log('Database was seeded successfully');
+        }
+        
+        // Fetch users
+        const fetchedUsers = await getUsers(currentPage);
+        setUsers(fetchedUsers);
+      } catch (error) {
+        console.error('Error initializing data:', error);
+        setError('Failed to load users. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeData();
   }, [currentPage]);
 
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const fetchedUsers = await getUsers(currentPage);
-      setUsers(fetchedUsers);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      setError('Failed to load users. Please try again.');
-    } finally {
-      setLoading(false);
+  // Clear success message after 3 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [successMessage]);
 
   const handleStatusChange = async (userId: string, newStatus: User['status']) => {
     try {
+      setActionInProgress(userId);
+      setError(null);
       await updateUserStatus(userId, newStatus);
+      
       // Update local state
       setUsers(users.map(user => 
         user.id === userId ? { ...user, status: newStatus } : user
       ));
+      
+      setSuccessMessage(`User status updated to ${newStatus}`);
     } catch (error) {
       console.error('Error updating user status:', error);
       setError('Failed to update user status. Please try again.');
+    } finally {
+      setActionInProgress(null);
     }
   };
 
   const handleDeleteUser = async (userId: string) => {
+    if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      return;
+    }
+
     try {
+      setActionInProgress(userId);
+      setError(null);
       await deleteUser(userId);
+      
       // Update local state
       setUsers(users.filter(user => user.id !== userId));
+      setSuccessMessage('User deleted successfully');
     } catch (error) {
       console.error('Error deleting user:', error);
       setError('Failed to delete user. Please try again.');
+    } finally {
+      setActionInProgress(null);
     }
   };
 
@@ -105,6 +141,18 @@ const Users = () => {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-purple-400">Users</h1>
       
+      {successMessage && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+          {successMessage}
+        </div>
+      )}
+      
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+          {error}
+        </div>
+      )}
+
       <div className="bg-gray-800 rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-700">
           <thead className="bg-gray-900">
@@ -118,7 +166,7 @@ const Users = () => {
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
             {users.map((user) => (
-              <tr key={user.id}>
+              <tr key={user.id} className={actionInProgress === user.id ? 'opacity-50' : ''}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div>
@@ -147,7 +195,8 @@ const Users = () => {
                     {user.status !== 'active' && (
                       <button
                         onClick={() => handleStatusChange(user.id, 'active')}
-                        className="text-green-400 hover:text-green-500"
+                        disabled={actionInProgress === user.id}
+                        className="text-green-400 hover:text-green-500 disabled:opacity-50"
                       >
                         Activate
                       </button>
@@ -155,14 +204,16 @@ const Users = () => {
                     {user.status !== 'suspended' && (
                       <button
                         onClick={() => handleStatusChange(user.id, 'suspended')}
-                        className="text-yellow-400 hover:text-yellow-500"
+                        disabled={actionInProgress === user.id}
+                        className="text-yellow-400 hover:text-yellow-500 disabled:opacity-50"
                       >
                         Suspend
                       </button>
                     )}
                     <button
                       onClick={() => handleDeleteUser(user.id)}
-                      className="text-red-400 hover:text-red-500"
+                      disabled={actionInProgress === user.id}
+                      className="text-red-400 hover:text-red-500 disabled:opacity-50"
                     >
                       Delete
                     </button>

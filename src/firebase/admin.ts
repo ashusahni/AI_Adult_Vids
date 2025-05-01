@@ -10,7 +10,8 @@ import {
   addDoc,
   Timestamp,
   limit,
-  startAfter
+  startAfter,
+  getDoc
 } from 'firebase/firestore';
 import { db } from './config';
 import { User, SubscriptionPlan, Payment, Analytics } from '../types/admin';
@@ -19,12 +20,32 @@ import { User, SubscriptionPlan, Payment, Analytics } from '../types/admin';
 export const getUsers = async (page = 1, perPage = 10) => {
   try {
     const usersRef = collection(db, 'users');
-    const q = query(
+    let q = query(
       usersRef,
       orderBy('createdAt', 'desc'),
-      limit(perPage),
-      startAfter((page - 1) * perPage)
+      limit(perPage)
     );
+
+    // If not first page, get the last document from previous page
+    if (page > 1) {
+      const previousPageQuery = query(
+        usersRef,
+        orderBy('createdAt', 'desc'),
+        limit((page - 1) * perPage)
+      );
+      const previousPageSnapshot = await getDocs(previousPageQuery);
+      const lastDoc = previousPageSnapshot.docs[previousPageSnapshot.docs.length - 1];
+      
+      if (lastDoc) {
+        q = query(
+          usersRef,
+          orderBy('createdAt', 'desc'),
+          startAfter(lastDoc),
+          limit(perPage)
+        );
+      }
+    }
+
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({
       id: doc.id,
@@ -38,12 +59,23 @@ export const getUsers = async (page = 1, perPage = 10) => {
 
 export const updateUserStatus = async (userId: string, status: User['status']) => {
   try {
+    console.log('Updating user status:', userId, status);
     const userRef = doc(db, 'users', userId);
+    
+    // First verify the user exists
+    const userDoc = await getDoc(userRef);
+    if (!userDoc.exists()) {
+      throw new Error('User not found');
+    }
+
+    // Update the user status
     await updateDoc(userRef, { 
       status,
-      isSuspended: status === 'suspended',
       updatedAt: Timestamp.now()
     });
+
+    console.log('User status updated successfully');
+    return true;
   } catch (error) {
     console.error('Error updating user status:', error);
     throw error;
@@ -52,11 +84,24 @@ export const updateUserStatus = async (userId: string, status: User['status']) =
 
 export const deleteUser = async (userId: string) => {
   try {
+    console.log('Deleting user:', userId);
     const userRef = doc(db, 'users', userId);
+    
+    // First verify the user exists
+    const userDoc = await getDoc(userRef);
+    if (!userDoc.exists()) {
+      throw new Error('User not found');
+    }
+
+    // Instead of actually deleting, mark as deleted
     await updateDoc(userRef, {
       status: 'deleted',
-      deletedAt: Timestamp.now()
+      deletedAt: Timestamp.now(),
+      updatedAt: Timestamp.now()
     });
+
+    console.log('User marked as deleted successfully');
+    return true;
   } catch (error) {
     console.error('Error deleting user:', error);
     throw error;
