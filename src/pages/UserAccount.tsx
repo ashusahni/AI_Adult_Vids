@@ -47,7 +47,7 @@ const UserAccount: React.FC = () => {
                   className="bg-purple-500 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition-colors duration-200"
                   onClick={() => {/* Add subscription handling */}}
                 >
-                  Upgrade to Premium
+                  Upgrade to Premium! 
                 </button>
               </div>
             )}
