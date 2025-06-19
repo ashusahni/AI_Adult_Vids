@@ -518,7 +518,7 @@ const AdminPanel: React.FC = () => {
                 ) : (
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-1">
-                      Image File
+                      Image Files
                     </label>
                     <input
                       type="file"
