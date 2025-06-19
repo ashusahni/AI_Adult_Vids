@@ -208,7 +208,7 @@ const FeaturesPage: React.FC = () => {
                 </li>
                 <li className="flex items-center text-gray-300 text-sm sm:text-base">
                   <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
-                  SD quality videos
+                  HD quality videos
                 </li>
                 <li className="flex items-center text-gray-300 text-sm sm:text-base">
                   <Check className="w-4 h-4 text-purple-500 mr-2 flex-shrink-0" />
