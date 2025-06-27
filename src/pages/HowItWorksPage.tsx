@@ -24,7 +24,7 @@ const steps = [
   },
   {
     title: 'Discover Personalized Recommendations',
-    description: 'Our AI learns your preferences over time, suggesting content tailored to your tastes. The more you watch, the better your recommendations become.',
+    description: 'Our AI learns your preferences over time, suggesting content tailored to your tastes. The more you watch, the better your recommendations will become.',
     icon: Heart,
   },
   {
