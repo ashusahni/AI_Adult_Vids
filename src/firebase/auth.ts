@@ -60,21 +60,21 @@ export const signOutUser = async (): Promise<void> => {
 };
 
 // Get user data from Firestore
-export const getUserData = async (userId: string) => {
-  try {
-    // Get user data from Firestore
-    const userDoc = await getDoc(doc(db, 'users', userId));
-    if (userDoc.exists()) {
-      return userDoc.data();
-    } else {
-      console.error('User document not found');
-      return null;
-    }
-  } catch (error) {
-    console.error('Error getting user data:', error);
-    throw error;
-  }
-};
+// export const getUserData = async (userId: string) => {
+//   try {
+//     // Get user data from Firestore
+//     const userDoc = await getDoc(doc(db, 'users', userId));
+//     if (userDoc.exists()) {
+//       return userDoc.data();
+//     } else {
+//       console.error('User document not found');
+//       return null;
+//     }
+//   } catch (error) {
+//     console.error('Error getting user data:', error);
+//     throw error;
+//   }
+// };
 
 // Update user subscription status
 export const updateSubscription = async (userId: string, isSubscribed: boolean) => {
