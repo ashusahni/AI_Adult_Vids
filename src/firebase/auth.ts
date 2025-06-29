@@ -38,16 +38,16 @@ export const signUp = async (email: string, password: string): Promise<UserCrede
 };
 
 // Sign in an existing user
-export const signIn = async (email: string, password: string): Promise<UserCredential> => {
-  try {
-    // Sign in user
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential;
-  } catch (error) {
-    console.error('Error signing in:', error);
-    throw error;
-  }
-};
+// export const signIn = async (email: string, password: string): Promise<UserCredential> => {
+//   try {
+//     // Sign in user
+//     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+//     return userCredential;
+//   } catch (error) {
+//     console.error('Error signing :', error);
+//     throw error;
+//   }
+// };
 
 // Sign out the current user
 export const signOutUser = async (): Promise<void> => {
