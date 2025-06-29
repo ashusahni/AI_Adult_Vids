@@ -38,16 +38,16 @@ export const signUp = async (email: string, password: string): Promise<UserCrede
 };
 
 // Sign in an existing user
-// export const signIn = async (email: string, password: string): Promise<UserCredential> => {
-//   try {
-//     // Sign in user
-//     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-//     return userCredential;
-//   } catch (error) {
-//     console.error('Error signing :', error);
-//     throw error;
-//   }
-// };
+export const signIn = async (email: string, password: string): Promise<UserCredential> => {
+  try {
+    // Sign in user
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential;
+  } catch (error) {
+    console.error('Error signing :', error);
+    throw error;
+  }
+};
 
 // Sign out the current user
 export const signOutUser = async (): Promise<void> => {
@@ -60,21 +60,21 @@ export const signOutUser = async (): Promise<void> => {
 };
 
 // Get user data from Firestore
-// export const getUserData = async (userId: string) => {
-//   try {
-//     // Get user data from Firestore
-//     const userDoc = await getDoc(doc(db, 'users', userId));
-//     if (userDoc.exists()) {
-//       return userDoc.data();
-//     } else {
-//       console.error('User document not found');
-//       return null;
-//     }
-//   } catch (error) {
-//     console.error('Error getting user data:', error);
-//     throw error;
-//   }
-// };
+export const getUserData = async (userId: string) => {
+  try {
+    // Get user data from Firestore
+    const userDoc = await getDoc(doc(db, 'users', userId));
+    if (userDoc.exists()) {
+      return userDoc.data();
+    } else {
+      console.error('User document not found');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error getting user data:', error);
+    throw error;
+  }
+};
 
 // Update user subscription status
 export const updateSubscription = async (userId: string, isSubscribed: boolean) => {
