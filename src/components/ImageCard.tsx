@@ -58,7 +58,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({ image, onClick, className 
 
         {/* Premium Badge */}
         {image.premium && (
-          <div className="absolute top-3 right-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
+          <div className="absolute top-3 right-3 bg-gradienk-500 text-white px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
             <FaCrown className="text-yellow-300" />
             <span className="text-sm font-medium">Premium</span>
           </div>
